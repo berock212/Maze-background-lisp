@@ -8,12 +8,10 @@
   (setf pos (position arg1 arguments :test #'equal)  ) 
   (handler-case
     (parse-integer ( elt arguments (+ pos 1) ) )
-    (error (ex) nil))
-  )
+    (error (ex) nil)))
 (defun get-args (arg1 arg2 default) 
   (setf result (car (remove nil(list (get-arg arg1) (get-arg arg2) ))))
-  (if (equal result nil)default result )
-  )
+  (if (equal result nil)default result ))
 ;Width of picture
 (defvar global-width (get-args "-w" "--width" 1920))
 ;Height of picture
@@ -35,10 +33,7 @@
     (loop for coor in coor-loop
 	  do
 	  (
-	   if (check (+ (car coor) xpos) (+ (cadr coor) ypos) ) (return T)
-	   )
-	  )
-    )
+	   if (check (+ (car coor) xpos) (+ (cadr coor) ypos) ) (return T))))
 
   (setf coor-array (make-array 4 :initial-contents coor-loop))
   (defun get-random-coor (xpos ypos)
@@ -47,12 +42,8 @@
 	(setf coor (aref coor-array (random 4 rand-state1)))
 	(let ((x (car coor))(y (cadr coor)))
 	  (if (check (+ x xpos) (+ y ypos))
-	    (return coor))
-	  )
-	)
-      nil
-      )
-    )
+	    (return coor))))
+      nil))
   ;Stores the coordinates of the last location
   (setf last-coor '())
   (setf max-value 1)
@@ -63,27 +54,19 @@
 	(setf next-move (get-random-coor xpos ypos))
 	(if (null next-move) 
 	  (let ((coor (pop last-coor) )) 
-	    (populate-map (car coor) (cadr coor) (- value 1) tcount)
-	    ) 
+	    (populate-map (car coor) (cadr coor) (- value 1) tcount)) 
 	  (let ( 
 		 (nextx (+ xpos (car next-move))) 
-		 (nexty (+ ypos (cadr next-move)))
-		 ) 
+		 (nexty (+ ypos (cadr next-move)))) 
 	    (push (list xpos ypos) last-coor)
 	    (setf max-value (max max-value value))
 	    (setf (aref maze-array nextx nexty) value)
-	    (populate-map nextx nexty (+ 1 value) (+ 1 tcount))
-	    )
-	  )
-	)
-      max-value
-      )
-    )
+	    (populate-map nextx nexty (+ 1 value) (+ 1 tcount)))))
+      max-value))
     (let ((x (random width rand-state1))(y (random height rand-state1)))
-  (populate-map x y 1 1)
-  )
-  (list maze-array max-value)
-  )
+  (populate-map x y 1 1))
+    (list maze-array max-value))
+
 (defun draw-png (coor-map max-value)
   (setf dimentions (array-dimensions coor-map))
   (let ((width (car dimentions)) (height (cadr dimentions)))
@@ -94,10 +77,8 @@
 	  (loop for y from 0 to (- height 1)
 		do
 		(setf value ( floor (* 255 (/ (aref coor-map x y) max-value))))
-		(setf (aref image y x 0) value)
-		))
-    (write-png png "test.png")
-    )
-  )
+		(setf (aref image y x 0) value)))
+    (write-png png "test.png")))
+
 ;executes everything
 ((lambda (pa) (draw-png (car pa) (cadr pa))) (get-maze-map global-width global-height))
